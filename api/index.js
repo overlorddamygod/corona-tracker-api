@@ -20,9 +20,10 @@ const title =[
 ]
 const coronaTitles = ['cases', 'deaths', 'recovered']
 let country = [];
+let latest = [];
 let info = {};
 let countryData = {};
-const time = process.env.REFRESH_TIME || 600000;
+const time = process.env.REFRESH_TIME || 900000;
 
 // Database Connection
 (async () => {
@@ -71,7 +72,7 @@ const getCountryData = async () => {
     // console.log(countriesRow.length);
     
     countriesRow.each((i, countryRow) => {
-        if (i != 0 && i != 354) {
+        if (i != 0 && i <=177) {
             let countryn = {}
             const countryName = $(countryRow).find('td').first().text().trim();
             
@@ -85,8 +86,10 @@ const getCountryData = async () => {
             }
         };
     })
-    delete countryData['Total:'];
-    delete countryData[''];
+    // delete countryData['Total:'];
+    // delete countryData[''];
+    // console.log(countryData);
+    
 }
 const getter = async () => {
     await getData();
@@ -101,6 +104,27 @@ const getter = async () => {
         date: `${nepalTime.year()}/${nepalTime.date()}/${nepalTime.day()}`,
         time: `${nepalTime.hour()}:${nepalTime.minute()}:${nepalTime.second()}`
     }
+    const latest_data = await dataModel.find({}, null, {
+        limit: 10,
+        sort: {
+            timestamp: -1
+        }
+    })
+    latest = [];
+    latest_data.forEach(latestdata => {
+        const { timestamp, date, time, details } = latestdata;
+        latest.push({
+            timestamp,
+            date,
+            time,
+            details
+        })
+    })
+
+    // const { details } = a;
+
+    // console.log(latest);
+    
     
     let datamodel = new dataModel();
     datamodel.timestamp = timeGot.timestamp;
@@ -121,6 +145,15 @@ setInterval(()=>getter(),time);
 router.get('/', (req, res) => {
     try {
         return res.json(info);
+    } catch (error) {
+        return res.json({
+            error: "Server Error"
+        });
+    }
+})
+router.get('/latest', (req, res) => {
+    try {
+        return res.json(latest);
     } catch (error) {
         return res.json({
             error: "Server Error"
@@ -148,5 +181,6 @@ router.get('/:countryname',(req, res) => {
         });
     }
 })
+
 
 module.exports = router;

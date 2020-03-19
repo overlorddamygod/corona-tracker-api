@@ -3,9 +3,9 @@ const mongoose = require('mongoose');
 const { Schema,model } = mongoose;
 
 const detailsSchema = Schema({
-    cases: String,
-    deaths: String,
-    recovered: String
+    cases: Number,
+    deaths: Number,
+    recovered: Number
 },{ _id : false });
 const countryDataSchema = Schema({
     Country: String,

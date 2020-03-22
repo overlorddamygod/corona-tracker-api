@@ -13,7 +13,12 @@ dotenv.config('./env')
 app.use(cors());
 app.use(express.json());
 // app.use(morgan('tiny'));
-
+app.get('/', (req, res) => {
+    res.json({
+        message: 'REST API FOR CORONA VIRUS TRACKER SITE',
+        link:"http://corona-tracker-murex.now.sh/"
+    });
+});
 // Route Middlewares
 app.use('/api/corona/', coronaAPI);
 

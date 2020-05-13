@@ -14,6 +14,7 @@ let tokens = [];
 tokenDB.on("value",snap=>{
     if (snap.val()) {
         tokens = Object.keys(snap.val());
+        console.log(`Got Tokens : ${tokens.length}`);
     }
 })
 const SITE_URL = 'https://www.worldometers.info/coronavirus/';
@@ -36,7 +37,7 @@ let latest = [];
 let info = {};
 let countryData = {};
 let prevNepalData = {};
-const time = process.env.REFRESH_TIME || 60000;
+const time = process.env.REFRESH_TIME || 1800000;
 
 const format = c => {
     return c.replace("+","");
@@ -75,8 +76,6 @@ const getTopData = async () => {
                 }
             })
             country.push(countryData);
-            // console.log(countryData);
-            
         };   
     })
 }
@@ -106,10 +105,12 @@ const headers = {
     'Authorization': 'key=AAAAT5jGHZM:APA91bH3OBhVf-_ZB2BosN8NbCD5ME-3bhi04TZJNS4GDzZjLGtBpNWI-6hKpZapD_DsU_hcxaEHJG2Ge5WbeaO6ca3yaTmytzk9NyA38T53FBGRdSUc79Kpd_zFBhnGK7TzwBcpIK8D'
 }
 
-const getNepalDataData= ()=> {    
-    if(!Object.keys(prevNepalData).length) return;
-
-    if(prevNepalData.NewCases == countryData.Nepal.NewCases) {
+const getNepalDataData= ()=> {  
+    console.log("NOO");
+      
+    if(!prevNepalData||!Object.keys(prevNepalData).length) return;
+    
+    if(prevNepalData.NewCases != countryData.Nepal.NewCases) {
         let newCase = format(countryData.Nepal.NewCases) - format(prevNepalData.NewCases);
         sendNotification(newCase);
     } else {

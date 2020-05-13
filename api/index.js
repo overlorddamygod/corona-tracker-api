@@ -4,7 +4,18 @@ const axios = require('axios');
 const mongoose = require('mongoose');
 const moment = require('moment-timezone');
 const dataModel = require('./model');
+const firebase = require("firebase");
+firebase.initializeApp({
+    databaseURL: "https://covid19-23c1c.firebaseio.com/"
+});
+const tokenDB = firebase.database().ref("fcm-token");
+let tokens = [];
 
+tokenDB.on("value",snap=>{
+    if (snap.val()) {
+        tokens = Object.keys(snap.val());
+    }
+})
 const SITE_URL = 'https://www.worldometers.info/coronavirus/';
 const DB_URL = 'mongodb+srv://overlord:naruto77@cluster0-vgvvn.mongodb.net/corona-tracker?retryWrites=true&w=majority';
 const title =[
@@ -19,12 +30,17 @@ const title =[
     'TotCasesPer1MPop'
 ]
 const coronaTitles = ['cases', 'deaths', 'recovered']
+let begin = true;
 let country = [];
 let latest = [];
 let info = {};
 let countryData = {};
-const time = process.env.REFRESH_TIME || 900000;
+let prevNepalData = {};
+const time = process.env.REFRESH_TIME || 60000;
 
+const format = c => {
+    return c.replace("+","");
+};
 // Database Connection
 (async () => {
     await mongoose.connect(DB_URL, {
@@ -68,9 +84,7 @@ const getCountryData = async () => {
     countryData = {};
     const { data } = await axios.get(SITE_URL);
     const $ = cheerio.load(data);
-    const countriesRow = $('tr');
-    // console.log(countriesRow.length);
-    
+    const countriesRow = $('tr');    
     countriesRow.each((i, countryRow) => {
         if (i != 0 && i <=177) {
             let countryn = {}
@@ -86,15 +100,52 @@ const getCountryData = async () => {
             }
         };
     })
-    // delete countryData['Total:'];
-    // delete countryData[''];
-    // console.log(countryData);
-    
+}
+const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'key=AAAAT5jGHZM:APA91bH3OBhVf-_ZB2BosN8NbCD5ME-3bhi04TZJNS4GDzZjLGtBpNWI-6hKpZapD_DsU_hcxaEHJG2Ge5WbeaO6ca3yaTmytzk9NyA38T53FBGRdSUc79Kpd_zFBhnGK7TzwBcpIK8D'
+}
+
+const getNepalDataData= ()=> {    
+    if(!Object.keys(prevNepalData).length) return;
+
+    if(prevNepalData.NewCases == countryData.Nepal.NewCases) {
+        let newCase = format(countryData.Nepal.NewCases) - format(prevNepalData.NewCases);
+        sendNotification(newCase);
+    } else {
+        console.log("No new Cases Found");
+    }
+};
+const sendNotification = (newCase) => {
+    console.log(`${newCase} new case has been found in Nepal`);
+    if (tokens) {
+        tokens.forEach(token=> {
+            axios.post("https://fcm.googleapis.com/fcm/send",{
+                "to": token,
+                "notification": {
+                "title": "New Case Found",
+                "body": `${newCase} new case has been found in Nepal`,
+                "subtitle":"SAD",
+                "mutable_content": true,
+                "sound": "Tri-tone"
+                }
+            },{
+                headers
+            })
+        })
+    }
 }
 const getter = async () => {
+    if (begin) {
+        prevNepalData = await {};
+        begin =false;
+    } else {        
+        prevNepalData = await countryData.Nepal;
+    }
     await getData();
     await getTopData();
     await getCountryData();
+    await getNepalDataData();
     const now =Date.now()
     const time = new Date(now)
     const nepalTime = moment(time).tz('Asia/Kathmandu')
@@ -120,11 +171,6 @@ const getter = async () => {
             details
         })
     })
-
-    // const { details } = a;
-
-    // console.log(latest);
-    
     
     let datamodel = new dataModel();
     datamodel.timestamp = timeGot.timestamp;

@@ -67,7 +67,7 @@ class CoronaApp {
         await this.getTopCountryData($);
         await this.getAllCountryData($);
         await this.checkNewCases(process.env.country || "Nepal");
-        // this.saveInDatabase();
+        this.saveInDatabase();
     }
 
     getMainInfo($) {

@@ -22,16 +22,16 @@ class CoronaApp {
         this.getEverything();
     }
 
-    async initFirebase() {
+    initFirebase() {
         // Firebase Initialization
         console.log("Initializing Firebase")
-        await firebase.initializeApp({
+        firebase.initializeApp({
             databaseURL: FIREBASE_DB_URL
         }); 
 
-        const tokenDB = await firebase.database().ref("fcm-token");
+        const tokenDB = firebase.database().ref("fcm-token");
 
-        await tokenDB.on("value",snap=>{
+        tokenDB.on("value",snap=>{
             if (snap.val()) {
                 this.tokens = Object.keys(snap.val());
                 console.log(`Got Tokens : ${this.tokens.length}`);

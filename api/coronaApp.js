@@ -105,6 +105,17 @@ class CoronaApp {
         })        
     }
 
+    async getCountryDataByDate(date) {        
+        const allData = await dataModel.find({
+            date,
+        },{
+            topCountryData:0,
+            _id:0,
+            details:0,
+        });
+        return allData;
+    }
+
     async saveInDatabase() {
         console.log("Saving in database");
         
@@ -149,11 +160,22 @@ class CoronaApp {
     checkNewCases(country) {
         if( !this.prevCountryData.length ) return;        
         
-        const prevCase = this.formatData(this.prevCountryData.filter(data=>data.Country==country)[0].NewCases);
-        const currentCase = this.formatData(this.allCountryData.filter(data=>data.Country==country)[0].NewCases);        
+        const prev = this.prevCountryData.filter(data=>data.Country==country)[0];
+        const current = this.allCountryData.filter(data=>data.Country==country)[0];
+
+        // Previouse New Cases
+        const prevNewCase = this.formatData(prev.NewCases);
+        const prevCase = this.formatData(prev.TotalCases);
+
+        // Current New Cases
+        const currentNewCase = this.formatData(current.NewCases);        
+        const currentCase = this.formatData(current.TotalCases);   
+
+        console.log(`Previous total cases : ${prevCase}`);
+        console.log(`Current total cases : ${currentCase}`);
                 
         if(prevCase != currentCase) {
-            const newCase =  currentCase - prevCase;
+            const newCase =  Math.abs(currentCase - prevCase);
             this.sendNotification(newCase,country);
         } else {
             console.log("No new Cases Found");

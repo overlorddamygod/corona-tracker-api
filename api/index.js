@@ -71,12 +71,7 @@ router.get('/:countryname',(req, res) => {
 
 router.get('/data/bydate',async (req,res) => {
     try {
-        console.log("HERE");
-        console.log(req.query.date);
-        
-        const data = await app.getCountryDataByDate(req.query.date);     
-        console.log(data.length);
-        
+        const data = await app.getCountryDataByDate(req.query.date);             
         return res.json(data);
     } catch (error) {
         return res.json({

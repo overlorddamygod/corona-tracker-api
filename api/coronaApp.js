@@ -18,10 +18,8 @@ class CoronaApp {
         this.tokens = [];
         this.firstInit = true;
 
-        this.initFirebase();
         // Get all required data
         this.getEverything();
-        
     }
 
     async initFirebase() {
@@ -44,7 +42,7 @@ class CoronaApp {
         console.log("Getting everything");
 
         if (this.firstInit) {
-
+            await this.initFirebase();
             const latestData = await dataModel.find({}, null, {
                 limit: 1,
                 sort: {

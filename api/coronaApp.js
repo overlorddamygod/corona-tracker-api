@@ -50,7 +50,7 @@ class CoronaApp {
                     timestamp: -1
                 }
             })
-            this.prevCountryData = latestData[0]? latestData[0].allCountryData : [];
+            this.prevCountryData = await latestData[0]? latestData[0].allCountryData : [];
             this.firstInit = false;
         } else {
             this.prevCountryData = this.allCountryData;

@@ -18,9 +18,6 @@ class CoronaApp {
         this.tokens = [];
         this.firstInit = true;
 
-        // Get all required data
-        this.getEverything();
-
         // Firebase Initialization
         firebase.initializeApp({
             databaseURL: FIREBASE_DB_URL
@@ -34,6 +31,9 @@ class CoronaApp {
                 console.log(`Got Tokens : ${this.tokens.length}`);
             }
         })
+
+        // Get all required data
+        this.getEverything();
         
     }
 

@@ -24,19 +24,23 @@ class CoronaApp {
 
     initFirebase() {
         // Firebase Initialization
-        console.log("Initializing Firebase")
-        firebase.initializeApp({
-            databaseURL: FIREBASE_DB_URL
-        }); 
+        return new Promise((resolve,reject)=> {
+            console.log("Initializing Firebase")
 
-        const tokenDB = firebase.database().ref("fcm-token");
+            firebase.initializeApp({
+                databaseURL: FIREBASE_DB_URL
+            }); 
 
-        tokenDB.on("value",snap=>{
-            if (snap.val()) {
-                this.tokens = Object.keys(snap.val());
-                console.log(`Got Tokens : ${this.tokens.length}`);
-            }
-        })
+            const tokenDB = firebase.database().ref("fcm-token");
+
+            tokenDB.on("value",snap=>{
+                if (snap.val()) {
+                    this.tokens = Object.keys(snap.val());
+                    console.log(`Got Tokens : ${this.tokens.length}`);
+                    resolve();
+                }
+            })
+        });
     }
 
     async getEverything() {

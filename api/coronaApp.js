@@ -24,6 +24,7 @@ class CoronaApp {
 
     async initFirebase() {
         // Firebase Initialization
+        console.log("Initializing Firebase")
         await firebase.initializeApp({
             databaseURL: FIREBASE_DB_URL
         }); 
@@ -62,7 +63,7 @@ class CoronaApp {
         await this.getTopCountryData($);
         await this.getAllCountryData($);
         this.checkNewCases(process.env.country || "Nepal");
-        this.saveInDatabase();
+        // this.saveInDatabase();
     }
 
     getMainInfo($) {

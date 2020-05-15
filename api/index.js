@@ -37,6 +37,19 @@ router.get('/', (req, res) => {
         });
     }
 })
+
+router.get('/allCountriesList',async (req, res) => {
+    try {            
+        const allCountriesList = await app.getAllCountries();  
+
+        return res.json(allCountriesList);
+    } catch (error) {
+        return res.json({
+            error: "Server Error"
+        });
+    }
+})
+
 router.get('/latest', (req, res) => {
     try {
         return res.json(app.latestDatas);
@@ -81,6 +94,5 @@ router.get('/data/bydate',async (req,res) => {
         });
     }
 })
-
 
 module.exports = router;

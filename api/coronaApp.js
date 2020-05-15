@@ -14,7 +14,8 @@ class CoronaApp {
         this.topCountryData = [];
         this.allCountryData = [];
         this.prevCountryData = [];
-        this.latestDatas = []
+        this.latestDatas = [];
+        this.allCountriesList = [];
         this.tokens = [];
         this.firstInit = true;
 
@@ -72,7 +73,7 @@ class CoronaApp {
 
     getMainInfo($) {
         const coronaInfo = $('div .maincounter-number');
-        coronaInfo.each((i, cases) => this.mainInfo[coronaTitles[i]] = $(cases).text().trim().replace(/,/g, ""));
+        coronaInfo.each((i, cases) => this.mainInfo[coronaTitles[i]] = parseInt($(cases).text().trim().replace(/,/g, "")),10);
     }
 
     getTopCountryData($) {
@@ -85,9 +86,9 @@ class CoronaApp {
                 let countryData = {};
                 $(countryRow).find('td').each((j, col) => {
                     if (j!=0) {
-                        if ($(col).text().trim() != '') {
-                            countryData[title[j]] = $(col).text().trim();
-                        }
+                        const colData = $(col).text().trim();
+
+                        countryData[title[j]] = colData || 0;
                     }
                 })
                 this.topCountryData.push(countryData);
@@ -104,9 +105,10 @@ class CoronaApp {
                 let countryData = {};
                 $(countryRow).find('td').each((j, col) => {
                     if (j!=0) {
-                        if ($(col).text().trim() != '') {
-                            countryData[title[j]] = $(col).text().trim();
-                        }
+
+                        const colData = $(col).text().trim();
+
+                        countryData[title[j]] = colData || '0';
                     }
                 })
                 this.allCountryData.push(countryData);
@@ -212,6 +214,16 @@ class CoronaApp {
 
     getIndividualCountryData = (countryName) => {
         return this.allCountryData.filter(data=>data.Country.toLowerCase() == countryName.toLowerCase())[0];
+    }
+
+    getAllCountries = () => {
+        // return cached data if available
+        if (this.allCountriesList.length !=0) return this.allCountriesList;
+                
+        // else return new List
+        this.allCountriesList = this.allCountryData.map(countryData => countryData.Country).sort();
+
+        return this.allCountriesList;
     }
 
     // Remove any symbols from the string

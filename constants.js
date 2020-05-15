@@ -22,7 +22,7 @@ const title =[
     'Population',
     'Continent'
 ]
-const coronaTitles = ['cases', 'deaths', 'recovered']
+const coronaTitles = ['Cases', 'Deaths', 'Recovered']
 
 module.exports =  {
     SITE_URL,

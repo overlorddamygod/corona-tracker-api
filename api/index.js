@@ -60,7 +60,9 @@ router.get('/top',(req, res) => {
 router.get('/:countryname',(req, res) => {
     try {
         const { countryname } = req.params;
-        const countryData = app.allCountryData.filter(data=> data.Country == countryname)[0];        
+    
+        const countryData = app.getIndividualCountryData(countryname);  
+              
         return res.json(countryData);
     } catch (error) {
         return res.json({

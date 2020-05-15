@@ -6,6 +6,7 @@ const headers = {
     'Authorization': process.env.AUTH_KEY || 'key=AAAAT5jGHZM:APA91bH3OBhVf-_ZB2BosN8NbCD5ME-3bhi04TZJNS4GDzZjLGtBpNWI-6hKpZapD_DsU_hcxaEHJG2Ge5WbeaO6ca3yaTmytzk9NyA38T53FBGRdSUc79Kpd_zFBhnGK7TzwBcpIK8D'
 }
 const title =[
+    '#',
     'Country',
     'TotalCases',
     'NewCases',
@@ -14,7 +15,12 @@ const title =[
     'TotalRecovered',
     'ActiveCases',
     'SeriousCritical',
-    'TotCasesPer1MPop'
+    'TotCasesPer1MPop',
+    'DeathsPer1MPop',
+    'Total Tests',
+    'TestsPer1MPop',
+    'Population',
+    'Continent'
 ]
 const coronaTitles = ['cases', 'deaths', 'recovered']
 

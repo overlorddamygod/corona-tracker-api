@@ -77,39 +77,41 @@ class CoronaApp {
 
     getTopCountryData($) {
         this.topCountryData = [];
-        const countriesRow = $('tr');
-        countriesRow.each((i, countryRow) => {            
-            if (i > 0 && i < 6) {
+        const countriesRow = $($('tbody')[0]).find('tr');
+        
+        countriesRow.each((i, countryRow) => {   
+            if (i > 7 && i < 13) {
+                // console.log($(countryRow).text());
                 let countryData = {};
                 $(countryRow).find('td').each((j, col) => {
-                    if (j < 7) {
+                    if (j!=0) {
                         if ($(col).text().trim() != '') {
                             countryData[title[j]] = $(col).text().trim();
                         }
                     }
                 })
                 this.topCountryData.push(countryData);
-            };   
+            }
         })        
     }
 
     getAllCountryData($) {
         this.allCountryData = [];        
-        const countriesRow = $('tr');    
+        const countriesRow = $($('tbody')[0]).find('tr');
+
         countriesRow.each((i, countryRow) => {
-            if (i != 0 && i <=177) {
-                let countryData = {}
-                const countryName = $(countryRow).find('td').first().text().trim();
-                if (countryName.trim() != "Total:" || countryName.trim() != '') {
-                    $(countryRow).find('td').each((j, col) => {
+            if (i > 7) {
+                let countryData = {};
+                $(countryRow).find('td').each((j, col) => {
+                    if (j!=0) {
                         if ($(col).text().trim() != '') {
                             countryData[title[j]] = $(col).text().trim();
                         }
-                    })
-                    this.allCountryData.push(countryData);
-                }
+                    }
+                })
+                this.allCountryData.push(countryData);
             }
-        })        
+        })                
     }
 
     async getCountryDataByDate(date) {        
@@ -153,7 +155,6 @@ class CoronaApp {
             nepalTime: timeGot.nepalTime,
             details: this.mainInfo
         });
-
 
         // Save it in database
         await datamodel.save((err) => {
@@ -207,6 +208,10 @@ class CoronaApp {
             })
         }
         console.log(`Sent notification to ${this.tokens.length} clients`);
+    }
+
+    getIndividualCountryData = (countryName) => {
+        return this.allCountryData.filter(data=>data.Country.toLowerCase() == countryName.toLowerCase())[0];
     }
 
     // Remove any symbols from the string

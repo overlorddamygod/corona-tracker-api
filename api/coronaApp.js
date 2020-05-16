@@ -36,7 +36,9 @@ class CoronaApp {
 
             tokenDB.on("value",snap=>{
                 if (snap.val()) {
-                    this.tokens = Object.keys(snap.val());
+                    this.tokens = Object.keys(snap.val()).map(token=> {                        
+                        return snap.val()[token].token;
+                    });                    
                     console.log(`Got Tokens : ${this.tokens.length}`);
                     resolve();
                 }
